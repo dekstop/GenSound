@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(GenSynth VERSION 0.1.0 LANGUAGES CXX)
+project(GenSynth VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,7 +13,7 @@ include(FetchContent)
 FetchContent_Declare(
     JUCE
     GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
-    GIT_TAG        8.0.4
+    GIT_TAG        8.0.7
     GIT_SHALLOW    TRUE
 )
 FetchContent_MakeAvailable(JUCE)
@@ -34,7 +34,7 @@ juce_add_plugin(GenSynth
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE
     COPY_PLUGIN_AFTER_BUILD FALSE   # set TRUE and configure paths when ready
     VST3_CATEGORIES         "Instrument" "Synth"
-    AU_MAIN_TYPE            "aumu"
+    AU_MAIN_TYPE            kAudioUnitType_MusicDevice
 )
 
 #-------------------------------------------------------------------------------
@@ -90,11 +90,19 @@ target_compile_definitions(GenSynth PUBLIC
 #-------------------------------------------------------------------------------
 # Link libraries
 #-------------------------------------------------------------------------------
+juce_generate_juce_header(GenSynth)
+
 target_link_libraries(GenSynth PRIVATE
     juce::juce_audio_utils
     juce::juce_audio_plugin_client
+    juce::juce_audio_devices
+    juce::juce_audio_formats
+    juce::juce_audio_processors
     juce::juce_gui_basics
+    juce::juce_gui_extra
     juce::juce_core
+    juce::juce_data_structures
+    juce::juce_events
 )
 
 # dl is needed for dlopen / dlsym on macOS (linked automatically, but explicit
