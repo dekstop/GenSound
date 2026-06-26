@@ -89,7 +89,11 @@ CompileDiagnostics ExternalCompiler::compileSync (const std::string& sourcePath,
         << " -fno-rtti";
 
     if (!sdkIncludePath_.empty())
-        cmd << " -I" << sdkIncludePath_;
+        cmd << " -I\"" << sdkIncludePath_ << "\"";
+
+    // Allow scripts to #include files from their own directory,
+    // enabling per-project utility headers alongside the script.
+    cmd << " -I\"" << fs::path (sourcePath).parent_path().string() << "\"";
 
     if (!extraFlags_.empty())
         cmd << " " << extraFlags_;
