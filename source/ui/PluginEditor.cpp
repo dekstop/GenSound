@@ -143,7 +143,8 @@ void GenSynthEditor::refreshStatus()
     statusLabel_.setText (status.empty() ? "Ready" : status,
                           juce::dontSendNotification);
 
-    bool ok = (status.find ("error") == std::string::npos && !status.empty());
+    // Colour is driven by the process exit code, not string parsing
+    bool ok = status.empty() || processor_.lastCompileSuccess();
     statusLabel_.setColour (juce::Label::textColourId,
                             ok ? juce::Colours::lightgreen : juce::Colours::orangered);
 

@@ -9,9 +9,7 @@ CompileDiagnostics CompileDiagnostics::parse (const std::string& stderr_text,
     diag.success   = compilationSucceeded;
     diag.rawStderr = stderr_text;
 
-    // clang diagnostic format:
-    //   /path/to/file.cpp:12:5: error: some message
-    //   /path/to/file.cpp:12:5: warning: some message
+    // Match clang's structured diagnostic lines: file:line:col: kind: message
     static const std::regex lineRe (
         R"(^([^:]+):(\d+):(\d+):\s+(error|warning|note):\s+(.*)$)");
 
@@ -31,10 +29,10 @@ CompileDiagnostics CompileDiagnostics::parse (const std::string& stderr_text,
             rec.message = m[5].str();
 
             std::string kind = m[4].str();
-            if      (kind == "error")   { rec.kind = DiagnosticRecord::Kind::Error;   ++diag.errorCount; }
+            if      (kind == "error")   rec.kind = DiagnosticRecord::Kind::Error;
             else if (kind == "warning") { rec.kind = DiagnosticRecord::Kind::Warning; ++diag.warningCount; }
-            else if (kind == "note")    { rec.kind = DiagnosticRecord::Kind::Note; }
-            else                        { rec.kind = DiagnosticRecord::Kind::Unknown; }
+            else if (kind == "note")    rec.kind = DiagnosticRecord::Kind::Note;
+            else                        rec.kind = DiagnosticRecord::Kind::Unknown;
         }
         else
         {
@@ -51,17 +49,12 @@ CompileDiagnostics CompileDiagnostics::parse (const std::string& stderr_text,
 
 std::string CompileDiagnostics::summary() const
 {
-    if (success && errorCount == 0 && warningCount == 0)
-        return "Compiled OK";
-
-    if (success && errorCount == 0)
+    if (success)
+    {
+        if (warningCount == 0)
+            return "Compiled OK";
         return "Compiled OK (" + std::to_string (warningCount) + " warning"
                + (warningCount == 1 ? "" : "s") + ")";
-
-    std::string s = std::to_string (errorCount) + " error"
-                  + (errorCount == 1 ? "" : "s");
-    if (warningCount > 0)
-        s += ", " + std::to_string (warningCount) + " warning"
-           + (warningCount == 1 ? "" : "s");
-    return s;
+    }
+    return "Compile failed";
 }

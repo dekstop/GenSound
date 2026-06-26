@@ -3,7 +3,6 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_gui_basics/juce_gui_basics.h>
-
 #include "audio/VoiceManager.h"
 #include "compile/ScriptManager.h"
 #include "compile/FileWatcher.h"
@@ -59,6 +58,7 @@ public:
     void         setScriptPath         (const std::string& path);
     std::string  lastCompileStatus()    const;
     std::string  lastCompileErrors()    const;
+    bool         lastCompileSuccess()   const;
     uint32_t     activeVersionNumber()  const;
     int          activeVoiceCount()     const;
     bool         isCompiling()          const;
@@ -83,6 +83,7 @@ private:
     mutable juce::CriticalSection statusLock_;
     std::string   lastStatus_;
     std::string   lastErrors_;
+    bool          lastSuccess_ = true;
 
     // Script path persisted in plugin state
     std::string   scriptPath_;

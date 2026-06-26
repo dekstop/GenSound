@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 #-------------------------------------------------------------------------------
-# JUCE — fetched automatically if not already available on CMAKE_PREFIX_PATH
+# JUCE
 #-------------------------------------------------------------------------------
 include(FetchContent)
 
@@ -17,6 +17,12 @@ FetchContent_Declare(
     GIT_SHALLOW    TRUE
 )
 FetchContent_MakeAvailable(JUCE)
+
+#-------------------------------------------------------------------------------
+# Bundle the SDK header as a binary resource so it travels with the installed
+# plugin and does not depend on the source tree being present at runtime.
+#-------------------------------------------------------------------------------
+juce_add_binary_data(GenSynthSDKData SOURCES sdk/GenSynthSDK.h)
 
 #-------------------------------------------------------------------------------
 # Plugin target
@@ -32,7 +38,7 @@ juce_add_plugin(GenSynth
     NEEDS_MIDI_OUTPUT       FALSE
     IS_MIDI_EFFECT          FALSE
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE
-    COPY_PLUGIN_AFTER_BUILD FALSE   # set TRUE and configure paths when ready
+    COPY_PLUGIN_AFTER_BUILD FALSE
     VST3_CATEGORIES         "Instrument" "Synth"
     AU_MAIN_TYPE            kAudioUnitType_MusicDevice
 )
@@ -93,6 +99,7 @@ target_compile_definitions(GenSynth PUBLIC
 juce_generate_juce_header(GenSynth)
 
 target_link_libraries(GenSynth PRIVATE
+    GenSynthSDKData
     juce::juce_audio_utils
     juce::juce_audio_plugin_client
     juce::juce_audio_devices
@@ -105,8 +112,6 @@ target_link_libraries(GenSynth PRIVATE
     juce::juce_events
 )
 
-# dl is needed for dlopen / dlsym on macOS (linked automatically, but explicit
-# is cleaner in case of unusual toolchain setups)
 if(APPLE)
     target_link_libraries(GenSynth PRIVATE "-framework CoreFoundation")
 endif()
@@ -117,12 +122,6 @@ endif()
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang|GNU")
     target_compile_options(GenSynth PRIVATE
         -Wall -Wextra -Wshadow -Wnon-virtual-dtor
-        -Wno-unused-parameter   # JUCE has a lot of these
+        -Wno-unused-parameter
     )
 endif()
-
-#-------------------------------------------------------------------------------
-# Install SDK header alongside built plugin (optional convenience)
-#-------------------------------------------------------------------------------
-install(FILES sdk/GenSynthSDK.h
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/sdk")
