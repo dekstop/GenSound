@@ -5,7 +5,7 @@
 // p[2] = attack            (0–1 → 0.001–0.1 s)
 // p[3] = release           (0–1 → 0.05–1.5 s)
 
-#include "GenSynthSDK.h"
+#include "GenSoundSDK.h"
 
 struct State
 {
@@ -41,7 +41,7 @@ GS_EXPORT VoiceOutput synth (VoiceState* vs, const VoiceContext* ctx)
 
     // FM modulation: phase modulate the carrier by the modulator
     float modSignal = gs::sine (s->modulatorPhase) * modIdx;
-    float carrierPhaseMod = s->carrierPhase + modSignal / (6.283185307f);
+    float carrierPhaseMod = s->carrierPhase + modSignal / gs::TWO_PI;
 
     s->carrierPhase += carrierFreq / ctx->sampleRate;
     if (s->carrierPhase >= 1.0f) s->carrierPhase -= 1.0f;

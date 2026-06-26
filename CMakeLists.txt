@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(GenSynth VERSION 0.1.0 LANGUAGES C CXX)
+project(GenSound VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -22,17 +22,17 @@ FetchContent_MakeAvailable(JUCE)
 # Bundle the SDK header as a binary resource so it travels with the installed
 # plugin and does not depend on the source tree being present at runtime.
 #-------------------------------------------------------------------------------
-juce_add_binary_data(GenSynthSDKData SOURCES sdk/GenSynthSDK.h)
+juce_add_binary_data(GenSoundSDKData SOURCES sdk/GenSoundSDK.h)
 
 #-------------------------------------------------------------------------------
 # Plugin target
 #-------------------------------------------------------------------------------
-juce_add_plugin(GenSynth
-    COMPANY_NAME            "GenSynth"
-    PLUGIN_MANUFACTURER_CODE GnSy
+juce_add_plugin(GenSound
+    COMPANY_NAME            "GenSound"
+    PLUGIN_MANUFACTURER_CODE GnSn
     PLUGIN_CODE             GnS1
     FORMATS                 AU VST3
-    PRODUCT_NAME            "GenSynth"
+    PRODUCT_NAME            "GenSound"
     IS_SYNTH                TRUE
     NEEDS_MIDI_INPUT        TRUE
     NEEDS_MIDI_OUTPUT       FALSE
@@ -46,7 +46,7 @@ juce_add_plugin(GenSynth
 #-------------------------------------------------------------------------------
 # Sources
 #-------------------------------------------------------------------------------
-target_sources(GenSynth PRIVATE
+target_sources(GenSound PRIVATE
     source/PluginProcessor.cpp
     source/PluginProcessor.h
 
@@ -77,7 +77,7 @@ target_sources(GenSynth PRIVATE
 #-------------------------------------------------------------------------------
 # Include paths
 #-------------------------------------------------------------------------------
-target_include_directories(GenSynth PRIVATE
+target_include_directories(GenSound PRIVATE
     source
     sdk
 )
@@ -85,21 +85,20 @@ target_include_directories(GenSynth PRIVATE
 #-------------------------------------------------------------------------------
 # Compile definitions
 #-------------------------------------------------------------------------------
-target_compile_definitions(GenSynth PUBLIC
+target_compile_definitions(GenSound PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0
-    JUCE_DISPLAY_SPLASH_SCREEN=0
     JUCE_REPORT_APP_USAGE=0
 )
 
 #-------------------------------------------------------------------------------
 # Link libraries
 #-------------------------------------------------------------------------------
-juce_generate_juce_header(GenSynth)
+juce_generate_juce_header(GenSound)
 
-target_link_libraries(GenSynth PRIVATE
-    GenSynthSDKData
+target_link_libraries(GenSound PRIVATE
+    GenSoundSDKData
     juce::juce_audio_utils
     juce::juce_audio_plugin_client
     juce::juce_audio_devices
@@ -113,14 +112,14 @@ target_link_libraries(GenSynth PRIVATE
 )
 
 if(APPLE)
-    target_link_libraries(GenSynth PRIVATE "-framework CoreFoundation")
+    target_link_libraries(GenSound PRIVATE "-framework CoreFoundation")
 endif()
 
 #-------------------------------------------------------------------------------
 # Compiler warnings
 #-------------------------------------------------------------------------------
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang|GNU")
-    target_compile_options(GenSynth PRIVATE
+    target_compile_options(GenSound PRIVATE
         -Wall -Wextra -Wshadow -Wnon-virtual-dtor
         -Wno-unused-parameter
     )

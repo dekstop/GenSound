@@ -14,12 +14,12 @@
 // FileWatcher. The audio thread only touches VoiceManager; all other work
 // happens on background threads.
 //==============================================================================
-class GenSynthProcessor : public juce::AudioProcessor
+class GenSoundProcessor : public juce::AudioProcessor
 {
 public:
     //--------------------------------------------------------------------------
-    GenSynthProcessor();
-    ~GenSynthProcessor() override;
+    GenSoundProcessor();
+    ~GenSoundProcessor() override;
 
     //--------------------------------------------------------------------------
     // AudioProcessor interface
@@ -31,7 +31,7 @@ public:
     juce::AudioProcessorEditor* createEditor() override;
     bool                        hasEditor()    const override { return true; }
 
-    const juce::String getName() const override { return "GenSynth"; }
+    const juce::String getName() const override { return "GenSound"; }
 
     bool   acceptsMidi()           const override { return true; }
     bool   producesMidi()          const override { return false; }
@@ -90,5 +90,5 @@ private:
 
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GenSynthProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GenSoundProcessor)
 };

@@ -4,22 +4,22 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-class GenSynthProcessor;
+class GenSoundProcessor;
 
 //==============================================================================
-// GenSynthEditor
+// GenSoundEditor
 //
 // Minimal UI: script path, compile status, error text, active voice count,
 // version number, compile button, and open-folder button.
 // Updates on a 100ms timer tick.
 //==============================================================================
-class GenSynthEditor : public juce::AudioProcessorEditor,
+class GenSoundEditor : public juce::AudioProcessorEditor,
                        private juce::Timer,
                        private juce::FileDragAndDropTarget
 {
 public:
-    explicit GenSynthEditor (GenSynthProcessor& p);
-    ~GenSynthEditor() override;
+    explicit GenSoundEditor (GenSoundProcessor& p);
+    ~GenSoundEditor() override;
 
     void paint  (juce::Graphics&) override;
     void resized() override;
@@ -36,7 +36,7 @@ private:
     void chooseScript();
     void openScriptFolder();
 
-    GenSynthProcessor& processor_;
+    GenSoundProcessor& processor_;
 
     juce::Label       titleLabel_;
     juce::Label       scriptPathLabel_;
@@ -49,5 +49,11 @@ private:
     juce::TextEditor  errorBox_;
     juce::Label       dropHintLabel_;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GenSynthEditor)
+    // Remembers the last folder used in the script file browser
+    juce::ApplicationProperties appProperties_;
+
+    juce::File lastBrowseFolder();
+    void       saveLastBrowseFolder (const juce::File& folder);
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GenSoundEditor)
 };

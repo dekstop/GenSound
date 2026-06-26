@@ -3,7 +3,7 @@
 // p[0] = pitch sweep depth (0–1)
 // p[1] = body decay (0–1 → 0.1–0.6 s)
 
-#include "GenSynthSDK.h"
+#include "GenSoundSDK.h"
 
 struct State
 {

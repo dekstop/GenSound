@@ -1,4 +1,4 @@
-# GenSynth
+# GenSound
 
 A macOS AU/VST3 instrument plugin for fast sketching of generative and tracker-friendly instruments in ordinary C++.
 
@@ -20,21 +20,21 @@ JUCE 8.x is fetched automatically by CMake.
 ## Building
 
 ```bash
-git clone <this-repo> GenSynth
-cd GenSynth
+git clone <this-repo> GenSound
+cd GenSound
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release -j$(sysctl -n hw.logicalcpu)
 ```
 
-The built plugin appears in `build/GenSynth_artefacts/Release/`.
+The built plugin appears in `build/GenSound_artefacts/Release/`.
 
 Copy it to your plugin folder:
 ```bash
 # AU
-cp -r build/GenSynth_artefacts/Release/AU/GenSynth.component ~/Library/Audio/Plug-Ins/Components/
+cp -r build/GenSound_artefacts/Release/AU/GenSound.component ~/Library/Audio/Plug-Ins/Components/
 
 # VST3
-cp -r build/GenSynth_artefacts/Release/VST3/GenSynth.vst3 ~/Library/Audio/Plug-Ins/VST3/
+cp -r build/GenSound_artefacts/Release/VST3/GenSound.vst3 ~/Library/Audio/Plug-Ins/VST3/
 ```
 
 ---
@@ -45,7 +45,7 @@ cp -r build/GenSynth_artefacts/Release/VST3/GenSynth.vst3 ~/Library/Audio/Plug-I
 2. Include the SDK header:
 
 ```cpp
-#include "GenSynthSDK.h"
+#include "GenSoundSDK.h"
 ```
 
 3. Export two functions:
@@ -201,12 +201,12 @@ When you save a script and it recompiles successfully:
 **AU code signing** — AU plugins require a valid code signature to load in Logic Pro and GarageBand. Sign with your Apple Developer identity:
 ```bash
 codesign --force --sign "Developer ID Application: Your Name (TEAMID)" \
-  build/GenSynth_artefacts/Release/AU/GenSynth.component
+  build/GenSound_artefacts/Release/AU/GenSound.component
 ```
 VST3 works unsigned for testing in most DAWs.
 
 **Karplus-Strong pitch range** — `pluck.cpp` uses a fixed-size delay line (60 samples). This limits minimum pitch to roughly E4 at 44100 Hz. For lower pitches, reduce the fundamental frequency mapping or increase `kMaxDelay` (stays within 256 bytes up to ~64 samples).
 
-**Script ABI version** — `GENSYNTH_ABI_VERSION` in `GenSynthSDK.h` is currently `1`. The host and scripts must match. If the ABI changes, bump the version and recompile all scripts.
+**Script ABI version** — `GENSOUND_ABI_VERSION` in `GenSoundSDK.h` is currently `1`. The host and scripts must match. If the ABI changes, bump the version and recompile all scripts.
 
 **No sandbox** — scripts run in-process. This is intentional for the demoscene/sizecoding use case where the user is also the script author.

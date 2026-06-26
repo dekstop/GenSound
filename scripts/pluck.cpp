@@ -10,7 +10,7 @@
 // For lower pitches use a shorter state struct or a heap-allocated extension.
 // This version supports MIDI notes 64+ (E4 and above) safely at 44100.
 
-#include "GenSynthSDK.h"
+#include "GenSoundSDK.h"
 #include <cmath>
 
 static constexpr int kMaxDelay = 60;  // 256 bytes / sizeof(float) - headroom

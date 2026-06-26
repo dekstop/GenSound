@@ -1,7 +1,7 @@
 // simple_sine.cpp — basic sine oscillator with ADSR envelope
-// Build: the GenSynth plugin compiles this automatically.
+// Build: the GenSound plugin compiles this automatically.
 
-#include "GenSynthSDK.h"
+#include "GenSoundSDK.h"
 
 struct State
 {

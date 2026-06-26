@@ -16,7 +16,7 @@
 //
 // Usage:
 //   ExternalCompiler compiler;
-//   compiler.setOutputDirectory ("/tmp/gensynth_build");
+//   compiler.setOutputDirectory ("/tmp/gensound_build");
 //   compiler.setSdkIncludePath  ("/path/to/sdk");
 //   compiler.compileAsync ("kick.cpp", [] (uint32_t ver, const std::string& path,
 //                                         const CompileDiagnostics& diag) { ... });

@@ -1,16 +1,25 @@
 #include "PluginEditor.h"
 #include "../PluginProcessor.h"
 
+static constexpr const char* kLastFolderKey = "lastScriptFolder";
+
 //==============================================================================
-GenSynthEditor::GenSynthEditor (GenSynthProcessor& p)
+GenSoundEditor::GenSoundEditor (GenSoundProcessor& p)
     : AudioProcessorEditor (p), processor_ (p)
 {
+    // Persistent preferences stored in ~/Library/Preferences/GenSound/
+    juce::PropertiesFile::Options opts;
+    opts.applicationName     = "GenSound";
+    opts.filenameSuffix      = "settings";
+    opts.osxLibrarySubFolder = "Preferences";
+    appProperties_.setStorageParameters (opts);
+
     setSize (520, 360);
     setResizable (true, true);
     setResizeLimits (400, 280, 900, 600);
 
     // Title
-    titleLabel_.setText ("GenSynth", juce::dontSendNotification);
+    titleLabel_.setText ("GenSound", juce::dontSendNotification);
     titleLabel_.setFont (juce::FontOptions (22.0f, juce::Font::bold));
     titleLabel_.setJustificationType (juce::Justification::centredLeft);
     addAndMakeVisible (titleLabel_);
@@ -67,13 +76,38 @@ GenSynthEditor::GenSynthEditor (GenSynthProcessor& p)
     startTimerHz (10);  // 100ms refresh
 }
 
-GenSynthEditor::~GenSynthEditor()
+GenSoundEditor::~GenSoundEditor()
 {
     stopTimer();
 }
 
 //==============================================================================
-void GenSynthEditor::paint (juce::Graphics& g)
+juce::File GenSoundEditor::lastBrowseFolder()
+{
+    if (auto* props = appProperties_.getUserSettings())
+    {
+        auto saved = props->getValue (kLastFolderKey);
+        if (saved.isNotEmpty())
+        {
+            juce::File folder (saved);
+            if (folder.isDirectory())
+                return folder;
+        }
+    }
+    return juce::File::getSpecialLocation (juce::File::userHomeDirectory);
+}
+
+void GenSoundEditor::saveLastBrowseFolder (const juce::File& folder)
+{
+    if (auto* props = appProperties_.getUserSettings())
+    {
+        props->setValue (kLastFolderKey, folder.getFullPathName());
+        props->saveIfNeeded();
+    }
+}
+
+//==============================================================================
+void GenSoundEditor::paint (juce::Graphics& g)
 {
     g.fillAll (juce::Colour (0xff242424));
 
@@ -85,7 +119,7 @@ void GenSynthEditor::paint (juce::Graphics& g)
                                 static_cast<float> (bounds.getRight()));
 }
 
-void GenSynthEditor::resized()
+void GenSoundEditor::resized()
 {
     auto area = getLocalBounds().reduced (8);
 
@@ -120,12 +154,12 @@ void GenSynthEditor::resized()
 }
 
 //==============================================================================
-void GenSynthEditor::timerCallback()
+void GenSoundEditor::timerCallback()
 {
     refreshStatus();
 }
 
-void GenSynthEditor::refreshStatus()
+void GenSoundEditor::refreshStatus()
 {
     bool compiling = processor_.isCompiling();
 
@@ -161,7 +195,7 @@ void GenSynthEditor::refreshStatus()
 }
 
 //==============================================================================
-bool GenSynthEditor::isInterestedInFileDrag (const juce::StringArray& files)
+bool GenSoundEditor::isInterestedInFileDrag (const juce::StringArray& files)
 {
     for (const auto& f : files)
         if (f.endsWith (".cpp"))
@@ -169,12 +203,13 @@ bool GenSynthEditor::isInterestedInFileDrag (const juce::StringArray& files)
     return false;
 }
 
-void GenSynthEditor::filesDropped (const juce::StringArray& files, int, int)
+void GenSoundEditor::filesDropped (const juce::StringArray& files, int, int)
 {
     for (const auto& f : files)
     {
         if (f.endsWith (".cpp"))
         {
+            saveLastBrowseFolder (juce::File (f).getParentDirectory());
             processor_.setScriptPath (f.toStdString());
             break;
         }
@@ -182,11 +217,11 @@ void GenSynthEditor::filesDropped (const juce::StringArray& files, int, int)
 }
 
 //==============================================================================
-void GenSynthEditor::chooseScript()
+void GenSoundEditor::chooseScript()
 {
     auto chooser = std::make_shared<juce::FileChooser> (
-        "Select a GenSynth script (.cpp)",
-        juce::File::getSpecialLocation (juce::File::userHomeDirectory),
+        "Select a GenSound script (.cpp)",
+        lastBrowseFolder(),
         "*.cpp");
 
     chooser->launchAsync (
@@ -195,11 +230,14 @@ void GenSynthEditor::chooseScript()
         {
             auto result = fc.getResult();
             if (result.existsAsFile())
+            {
+                saveLastBrowseFolder (result.getParentDirectory());
                 processor_.setScriptPath (result.getFullPathName().toStdString());
+            }
         });
 }
 
-void GenSynthEditor::openScriptFolder()
+void GenSoundEditor::openScriptFolder()
 {
     auto path = processor_.currentScriptPath();
     if (path.empty()) return;

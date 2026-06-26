@@ -1,8 +1,8 @@
 #pragma once
 
 //==============================================================================
-// GenSynthSDK.h
-// Stable ABI between GenSynth host and user-authored instrument scripts.
+// GenSoundSDK.h
+// Stable ABI between GenSound host and user-authored instrument scripts.
 //
 // Rules for scripts:
 //   1. Include this header only — never include JUCE or host internals.
@@ -21,7 +21,19 @@
 //------------------------------------------------------------------------------
 // ABI version — bump if layout changes
 //------------------------------------------------------------------------------
-static constexpr uint32_t GENSYNTH_ABI_VERSION = 1;
+static constexpr uint32_t GENSOUND_ABI_VERSION = 1;
+
+//==============================================================================
+// Mathematical constants
+//==============================================================================
+namespace gs
+{
+    static constexpr float PI          = 3.14159265358979323846f;
+    static constexpr float TWO_PI      = 6.28318530717958647692f;
+    static constexpr float HALF_PI     = 1.57079632679489661923f;
+    static constexpr float INV_TWO_PI  = 1.0f / TWO_PI;           // phase → radians inverse
+    static constexpr float INT32_MAX_F = 2147483648.0f;            // 2^31, for noise normalisation
+} // namespace gs
 
 //------------------------------------------------------------------------------
 // VoiceState
@@ -93,8 +105,8 @@ struct VoiceOutput
 
 // Required exports — every script must define both of these:
 //
-//   GS_EXPORT void      initVoice (VoiceState* vs);
-//   GS_EXPORT VoiceOutput synth   (VoiceState* vs, const VoiceContext* ctx);
+//   GS_EXPORT void        initVoice (VoiceState* vs);
+//   GS_EXPORT VoiceOutput synth     (VoiceState* vs, const VoiceContext* ctx);
 
 //==============================================================================
 // Utility helpers (header-only, available to all scripts)
@@ -106,7 +118,7 @@ namespace gs
 
 inline float sine (float phase)
 {
-    return std::sin (phase * 6.283185307f);
+    return std::sin (phase * TWO_PI);
 }
 
 inline float saw (float phase)
@@ -140,7 +152,7 @@ inline uint32_t xorshift32 (uint32_t& state)
 // White noise in [-1, 1]
 inline float noise (uint32_t& state)
 {
-    return static_cast<float> (xorshift32 (state)) / 2147483648.0f - 1.0f;
+    return static_cast<float> (xorshift32 (state)) / INT32_MAX_F - 1.0f;
 }
 
 // --- Envelopes --------------------------------------------------------------
@@ -213,7 +225,7 @@ struct OnePole
 // Compute lowpass coefficient from cutoff Hz and sampleRate
 inline float lpCoeff (float cutoffHz, float sampleRate)
 {
-    float omega = 6.283185307f * cutoffHz / sampleRate;
+    float omega = TWO_PI * cutoffHz / sampleRate;
     return omega / (omega + 1.0f);
 }
 

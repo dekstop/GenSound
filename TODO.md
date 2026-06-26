@@ -1,4 +1,4 @@
-# GenSynth — TODO
+# GenSound — TODO
 
 ## Milestone 7 (not yet implemented)
 - [ ] Offline render / export path
@@ -20,3 +20,4 @@
 - [ ] Example script: additive synthesis using `VoiceState` for partial phases
 - [ ] Investigate `__builtin_expect` / SIMD for inner sample loop if profiling warrants it
 - [ ] Consider a small `gs::Delay<N>` helper in SDK to make Karplus-Strong easier to write
+- [ ] Header dependency tracking for script directory includes: pass `-MMD` to clang++, parse the emitted `.d` file after each build, and watch exactly the headers it lists rather than polling the whole directory

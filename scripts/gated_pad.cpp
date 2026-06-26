@@ -4,7 +4,7 @@
 // p[1] = gate duty   (0–1, open fraction of gate period)
 // p[2] = filter sweep depth (0–1)
 
-#include "GenSynthSDK.h"
+#include "GenSoundSDK.h"
 #include <cmath>
 
 struct State
@@ -48,7 +48,7 @@ GS_EXPORT VoiceOutput synth (VoiceState* vs, const VoiceContext* ctx)
               + gs::sine (s->detunePhase) * 0.4f;
 
     // Filter sweep driven by beat position
-    float sweep    = std::sin (ctx->beat * 3.14159f * 0.5f) * ctx->p[2];
+    float sweep    = std::sin (ctx->beat * gs::PI * 0.5f) * ctx->p[2];
     float cutoffHz = 400.0f + sweep * 4000.0f;
     float coeff    = gs::lpCoeff (cutoffHz, ctx->sampleRate);
 

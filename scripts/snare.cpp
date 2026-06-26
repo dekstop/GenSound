@@ -2,7 +2,7 @@
 // p[0] = tone / noise blend  (0=all tone, 1=all noise)
 // p[1] = decay time          (0–1 → 0.05–0.4 s)
 
-#include "GenSynthSDK.h"
+#include "GenSoundSDK.h"
 
 struct State
 {
