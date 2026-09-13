@@ -184,18 +184,6 @@ When you save a script and it recompiles successfully:
 
 ---
 
-## Milestones implemented
-
-- [x] M1 — JUCE plugin shell
-- [x] M2 — Polyphonic voice engine
-- [x] M3 — External compilation pipeline
-- [x] M4 — Loader and versioning (hot-swap)
-- [x] M5 — File watching and compile button
-- [x] M6 — Transport-aware scripting, diagnostics, example instruments
-- [ ] M7 — Offline render/export (future)
-
----
-
 ## Notes and caveats
 
 **AU code signing** — AU plugins require a valid code signature to load in Logic Pro and GarageBand. Sign with your Apple Developer identity:

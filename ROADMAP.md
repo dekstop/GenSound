@@ -1,12 +1,25 @@
-# GenSound — TODO
+# GenSound — Roadmap
 
-## Milestone 7 (not yet implemented)
-- [ ] Offline render / export path
+Main development is now complete. This document maps out potential future directions.
+
+## Completed milestones
+
+- [x] M1 — JUCE plugin shell
+- [x] M2 — Polyphonic voice engine
+- [x] M3 — External compilation pipeline
+- [x] M4 — Loader and versioning (hot-swap)
+- [x] M5 — File watching and compile button
+- [x] M6 — Transport-aware scripting, diagnostics, example instruments
+
+## Planned features
+
+- [ ] M7 — Offline render / export path
   - Render a voice (or all voices) to a WAV/AIFF file without real-time constraint
   - Useful for tracker-style sample baking from procedural instruments
   - Candidate approach: headless render mode driven by a MIDI clip + duration parameter
 
-## Nice-to-haves / future work
+## Nice-to-haves
+
 - [ ] Replace polling FileWatcher with kqueue / FSEvents for lower latency and CPU use
 - [ ] Pitch bend MIDI handling (populate VoiceContext::freq from pitchwheel message)
 - [ ] Per-script parameter label customisation (script exports a `paramLabel(int)` fn)
