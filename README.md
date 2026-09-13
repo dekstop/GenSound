@@ -107,6 +107,10 @@ GS_EXPORT void initVoice(VoiceState* vs)
 | `p[8]`        | `float[]` | Plugin parameters, mapped to the 8 knobs           |
 | `seed`        | `uint32_t`| Stable deterministic seed for this voice           |
 
+### Plugin parameters (APVTS)
+
+The eight parameter values (`ctx->p[0]`–`ctx->p[7]`) are exposed to the host via JUCE's `AudioParameterFloat` array registered with the `AudioProcessorValueTreeState` (APVTS). This means they appear as automatable, MIDI-controllable, and externally modulatable parameters in any DAW that supports AU or VST3. You can map DAW automation lanes or LFOs to them, and they will be reflected in the host's parameter list. The parameters are entirely optional — scripts can ignore them and use only the voice-level fields. In a sizecoding or demo-coding context they are most useful for interactively exploring parameter ranges and sound shapes during live performance or sketching.
+
 ---
 
 ## SDK helpers (`gs::` namespace)
@@ -169,7 +173,7 @@ gs::stateAs<MyState>(vs)
 
 ## Parameters
 
-Eight unlabelled knobs (`P0`–`P7`) are available as `ctx->p[0]`–`ctx->p[7]` in scripts. Map them to whatever your script needs. They are automatable in the DAW.
+Eight unlabelled knobs (`P0`–`P7`) are available as `ctx->p[0]`–`ctx->p[7]` in scripts. Map them to whatever your script needs. They are automatable in the DAW via APVTS (see the VoiceContext section above for details).
 
 ---
 
