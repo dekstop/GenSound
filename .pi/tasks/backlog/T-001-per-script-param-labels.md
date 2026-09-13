@@ -7,6 +7,8 @@ Allow scripts to export a `paramLabel(int)` function so the plugin UI can displa
 - [ ] Plugin UI reads the labels from the compiled dylib and displays them next to the 8 knobs
 - [ ] If `paramLabel` is not exported, fall back to P0–P7 labels
 - [ ] Labels update when the script recompiles
+- [ ] README.md updated with documentation on the `paramLabel` export
+- [ ] All example scripts updated to export meaningful parameter labels
 
 ### Next
 Inspect `source/ui/PluginEditor.cpp` to understand the current knob rendering, then design the dylib symbol lookup and UI update mechanism.
